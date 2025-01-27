@@ -1,81 +1,54 @@
-import { useContext, useState } from "react";
+import { useStore } from "@nanostores/react"
+import { atom } from "nanostores"
 
-import { ContentContext } from "../components/ContentContext";
-import { filterEntries } from "../utils/Filter";
+import { contentState, setEntries, setLoadMoreVisible, setOffset } from "@/store/contentState"
+import { settingsState } from "@/store/settingsState"
+import { parseCoverImage } from "@/utils/images"
+import createSetter from "@/utils/nanostores"
 
-export default function useLoadMore() {
-  const {
-    allEntries,
-    filterStatus,
-    filterString,
-    filterType,
-    offset,
-    setAllEntries,
-    setEntries,
-    setLoadMoreUnreadVisible,
-    setLoadMoreVisible,
-    setOffset,
-    total,
-    unreadTotal,
-  } = useContext(ContentContext);
+const loadingMoreState = atom(false)
+const setLoadingMore = createSetter(loadingMoreState)
+
+const isUniqueEntry = (entry, existingEntries) =>
+  !existingEntries.some((existing) => existing.id === entry.id)
+
+const useLoadMore = () => {
+  const { offset } = useStore(contentState)
+  const { pageSize, showStatus } = useStore(settingsState)
 
   /* 加载更多 loading*/
-  const [loadingMore, setLoadingMore] = useState(false);
+  const loadingMore = useStore(loadingMoreState)
 
-  const getFirstImage = (entry) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(entry.content, "text/html");
-    const firstImg = doc.querySelector("img");
-    if (firstImg) {
-      entry.imgSrc = firstImg.getAttribute("src");
-    }
-    return entry;
-  };
+  const updateEntries = (newEntries) => {
+    const uniqueNewEntries = (existingEntries, entriesToAdd) =>
+      entriesToAdd.filter((entry) => isUniqueEntry(entry, existingEntries))
+
+    setEntries((prev) => [...prev, ...uniqueNewEntries(prev, newEntries)])
+    setOffset((prev) => prev + pageSize)
+  }
 
   const handleLoadMore = async (getEntries) => {
-    setLoadingMore(true);
+    setLoadingMore(true)
 
     try {
-      const response = await getEntries(offset + 100);
-      if (response?.data?.entries) {
-        setOffset(offset + 100);
-        const newArticlesWithImage = response.data.entries.map(getFirstImage);
-        const updatedAllArticles = [
-          ...new Map(
-            [...allEntries, ...newArticlesWithImage].map((entry) => [
-              entry.id,
-              entry,
-            ]),
-          ).values(),
-        ];
-        setAllEntries(updatedAllArticles);
-
-        const filteredArticles =
-          filterStatus === "all"
-            ? updatedAllArticles
-            : updatedAllArticles.filter((a) => a.status === "unread");
-
-        const filteredByString = filterString
-          ? filterEntries(
-              filteredArticles,
-              filterType,
-              filterStatus,
-              filterString,
-            )
-          : filteredArticles;
-
-        setEntries(filteredByString);
-        setLoadMoreVisible(updatedAllArticles.length < total);
-        setLoadMoreUnreadVisible(
-          filteredArticles.length < unreadTotal && filterStatus === "unread",
-        );
+      const response =
+        showStatus === "unread"
+          ? await getEntries(offset + pageSize, "unread")
+          : await getEntries(offset + pageSize)
+      if (response?.entries?.length > 0) {
+        const newEntries = response.entries.map(parseCoverImage)
+        updateEntries(newEntries)
+      } else {
+        setLoadMoreVisible(false)
       }
     } catch (error) {
-      console.error("Error fetching more articles:", error);
+      console.error("Error fetching more articles: ", error)
+    } finally {
+      setLoadingMore(false)
     }
+  }
 
-    setLoadingMore(false);
-  };
-
-  return { getFirstImage, handleLoadMore, loadingMore };
+  return { handleLoadMore, loadingMore }
 }
+
+export default useLoadMore

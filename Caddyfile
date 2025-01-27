@@ -1,6 +1,8 @@
-:80
+:2000
 
 root * /srv
+
+try_files {path} {path}/ /index.html
 
 # Enable the static file server.
 file_server

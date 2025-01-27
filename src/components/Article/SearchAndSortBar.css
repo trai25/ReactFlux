@@ -1,0 +1,31 @@
+.calendar-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--color-text-1);
+}
+
+.search-and-sort-bar {
+  display: flex;
+  position: sticky;
+  top: 0;
+  align-items: center;
+  z-index: 2;
+  background-color: rgb(var(--color-bg-1));
+  padding: 8px 0;
+}
+
+.search-and-sort-bar .button-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  margin: 0 8px;
+}
+
+.search-and-sort-bar .button-group button {
+  background-color: transparent;
+}
+
+.arco-input-group-addbefore .arco-select .arco-select-view {
+  border-radius: var(--border-radius-medium);
+}

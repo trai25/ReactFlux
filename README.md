@@ -1,64 +1,133 @@
-## ReactFlux
+# ReactFlux
 
-### 概述
+Read in other languages: [Deutsch](docs/README.de-DE.md), [Español](docs/README.es-ES.md), [Français](docs/README.fr-FR.md), [简体中文](docs/README.zh-CN.md)
 
-Reactflux 是 [Miniflux](https://github.com/miniflux/miniflux) 的第三方 Web 前端，提供了更为友好的阅读体验。
-* 现代化的界面
-* 响应式设计
-* 支持黑暗模式和自定义主题色
-* 全文搜索
-* 订阅源及分组管理
-* 快捷键支持
+## Overview
 
-### 截图
+ReactFlux is a third-party web frontend for [Miniflux](https://github.com/miniflux/v2), aimed at providing a more user-friendly reading experience.
 
-![large](https://github.com/electh/ReactFlux/raw/main/src/imgs/large.png)
-![medium](https://github.com/electh/ReactFlux/raw/main/src/imgs/medium.png)
-![settings](https://github.com/electh/ReactFlux/raw/main/src/imgs/settings.png)
+Key features include:
 
-### 演示
+- Modern interface design
+- Responsive layout with touch gestures support
+- Support for dark mode and custom themes
+- Customizable reading experience:
+  - Font family and size settings
+  - Article width adjustment
+  - Title alignment options
+  - Image viewer with zoom and slideshow
+  - Footnotes enhancement
+  - Code syntax highlighting
+  - Estimated reading time
+- Article and feed management:
+  - Google-like syntax for search
+  - Filter articles by read status, publish date, title, content, or author
+  - Batch operations for feeds
+  - Full-text fetching support
+  - De-duplicate articles by hash, title, or URL
+  - Auto mark articles as read while scrolling
+- Advanced features:
+  - Keyboard shortcuts (customizable)
+  - Batch update the host of filtered subscription URLs (useful for replacing RSSHub instances)
+  - Batch refresh errored subscriptions
+  - Save articles to third-party services
+- I18n supports (Deutsch / English / Español / Français / 简体中文)
+- Other features waiting for you to discover...
 
-[hosted instance](https://reactflux.pages.dev/login)
+## Online Demo & Screenshots
 
-### 部署
+Try ReactFlux with our [online demo instance](https://reactflux.pages.dev).
 
-#### Cloudflare Pages
+See how ReactFlux looks in different themes:
 
-Reactflux 使用 React 编写，build 之后只是一堆静态网页文件，可以直接使用部署在 Cloudflare Pages 上的演示站。
+![screenshot](images/screenshot.png)
+![devices](images/devices.png)
 
-或者你可以自行部署在 Cloudflare Pages 上，`框架预设`选择`Create React App`即可。
+## Quick Start
 
-#### Vercel
+1. Ensure you have a working Miniflux instance
+2. Directly use our [online demo instance](https://reactflux.pages.dev) or deploy ReactFlux using one of the methods below
+3. Log in using your Miniflux username and password or API key (recommended)
+
+## Deployment
+
+### Cloudflare Pages
+
+ReactFlux is built with React and generates a set of static web files after building, which can be directly deployed on Cloudflare Pages.
+
+You can deploy it on Cloudflare Pages by selecting `Framework preset` as `Create React App`.
+
+### Using Pre-built Files
+
+You can download the pre-built files from the `gh-pages` branch and deploy them to any static hosting service that supports single-page applications (SPA).
+
+Make sure to configure URL rewriting to redirect all requests to `index.html`.
+
+If you are deploying using Nginx, you might need to add the following configuration:
+
+```nginx
+location / {
+    try_files $uri $uri/ /index.html;
+}
+```
+
+Or using Caddy, you might need to add the following configuration:
+
+```caddyfile
+try_files {path} {path}/ /index.html
+```
+
+### Vercel
 
 [![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/electh/ReactFlux)
 
-#### Zeabur
+### Docker
 
-[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/OKXO3W)
+[![dockeri.co](https://dockerico.blankenship.io/image/electh/reactflux)](https://hub.docker.com/r/electh/reactflux)
 
-### 配置
+```bash
+docker run -p 2000:2000 electh/reactflux
+```
 
-你需要一个可用的 Miniflux 实例来使用本项目，Server Address 请填写实例地址，API Token 请填写实例 token，可在“Settings > API Keys > Create a new API key”生成一个。
+Or using [Docker Compose](docker-compose.yml):
 
-### 贡献者
+```bash
+docker-compose up -d
+```
 
-> 感谢所有让这个项目变得更好的贡献者们！
+<!-- ### Zeabur (Outdated, unrecommended)
 
-<table>
-<tr>
-    <td>
-        <a href="https://github.com/electh">
-            <img src="https://avatars.githubusercontent.com/u/83588235?v=4" width="90;" alt="electh" style="border-radius: 4px"/>
-            <br />
-            <sub><b>electh</b></sub>
-        </a>
-    </td>
-    <td>
-        <a href="https://github.com/NekoAria">
-            <img src="https://avatars.githubusercontent.com/u/23137034?v=4" width="90;" alt="NekoAria" style="border-radius: 4px"/>
-            <br />
-            <sub><b>NekoAria</b></sub>
-        </a>
-    </td>
-</tr>
-</table>
+[![Deploy to Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/OKXO3W) -->
+
+## Translation Guide
+
+To help us translate ReactFlux into your language, please contribute to the `locales` folder and send a pull request.
+
+Additionally, you need to add a README file for the respective language and reference it in all existing README files.
+
+You should also modify parts of the source code to include the i18n language packages for `Arco Design` and `Day.js`.
+
+For detailed changes, please refer to the modifications in [PR #145](https://github.com/electh/ReactFlux/pull/145).
+
+### Current Translators
+
+| Language | Translator                                      |
+| -------- | ----------------------------------------------- |
+| Deutsch  | [DonkeeeyKong](https://github.com/donkeeeykong) |
+| Español  | [Victorhck](https://github.com/victorhck)       |
+| Français | [MickGe](https://github.com/MickGe)             |
+| 简体中文 | [Neko Aria](https://github.com/NekoAria)        |
+
+## Contributors
+
+> Thanks to all the contributors who have made this project more awesome!
+
+<a href="https://github.com/electh/ReactFlux/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=electh/ReactFlux" alt="Contributors for ReactFlux" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
+## Star History
+
+[![Star History](https://starchart.cc/electh/ReactFlux.svg)](https://starchart.cc/electh/ReactFlux)
